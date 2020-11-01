@@ -1,6 +1,7 @@
 package com.example.shakedetect;
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 
 
 @SuppressLint("Registered")
@@ -30,6 +32,7 @@ public class SleepModeService extends Service implements SensorEventListener {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         return START_STICKY;
@@ -55,12 +58,10 @@ public class SleepModeService extends Service implements SensorEventListener {
             Toast.makeText(getApplicationContext(), "SLEEP", Toast.LENGTH_SHORT).show();
         }
     }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
     public int getDegree() {
         return degree;
     }

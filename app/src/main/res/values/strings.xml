@@ -3,4 +3,5 @@
     <string name="turn_on_screen_by_shaking">Turn On Screen By Shaking</string>
     <string name="sensitivity">sensitivity</string>
     <string name="perfeature">PERFEATURE</string>
+    <string name="sleep_mode">Sleep mode</string>
 </resources>
