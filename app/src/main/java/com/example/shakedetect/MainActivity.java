@@ -97,21 +97,21 @@ public class MainActivity extends AppCompatActivity {
         deviceManger = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         compName = new ComponentName(this, DeviceAdmin.class);
 
-        sleep_mode_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        shake_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                shakeSensitivityNum = shakeSensitivityEditText.getText().toString();
                 if (isChecked) {
-                    if (!angular_value.isEmpty()) {
-                        boolean active = deviceManger.isAdminActive(compName);
-                        if (active) {
-                            Intent intent = new Intent(MainActivity.this, SleepModeService.class);
-                            startService(intent);
-                        } else {
-                            alertDialog();
-                        }
+                    if (!shakeSensitivityNum.isEmpty()) {
+                        Intent intent_for_shake = new Intent(MainActivity.this, ShakeService.class);
+                        intent_for_shake.putExtra(sensitivity, shakeSensitivityNum);
+                        startService(intent_for_shake);
+                    } else {
+                        shake_switch.setChecked(false);
+                        Toast.makeText(getApplicationContext(), "Enter Shake Sensitivity", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    deviceManger.removeActiveAdmin(compName);
-                    stopService(new Intent(MainActivity.this, SleepModeService.class));
+                    stopService(new Intent(MainActivity.this, ShakeService.class));
                 }
             }
         });

@@ -4,18 +4,18 @@ import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-
+import java.util.Objects;
 
 @SuppressLint("Registered")
 public class SleepModeService extends Service implements SensorEventListener {
@@ -34,6 +34,17 @@ public class SleepModeService extends Service implements SensorEventListener {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (intent != null && intent.getExtras() != null) {
+            setDegree(Integer.parseInt((Objects.requireNonNull(intent.getExtras().getString(MainActivity.degree_id)))));
+            SharedPreferences.Editor editor = getSharedPreferences("MY_PREFS", MODE_PRIVATE).edit();
+            editor.putInt("Input_Degree", getDegree());
+            editor.apply();
+        }else{
+            SharedPreferences prefs = getSharedPreferences("MY_PREFS", MODE_PRIVATE);
+            setDegree(prefs.getInt("Input_Degree", 15));
+        }
+
         deviceManger = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -59,9 +70,9 @@ public class SleepModeService extends Service implements SensorEventListener {
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         if (inclination < getDegree() || inclination > (180 - getDegree())) {
             lockPhone();
-
         }
     }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -69,6 +80,10 @@ public class SleepModeService extends Service implements SensorEventListener {
 
     public void lockPhone() {
         deviceManger.lockNow();
+    }
+
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 
     public int getDegree() {

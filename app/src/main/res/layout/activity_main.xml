@@ -97,7 +97,18 @@
                 android:textSize="18sp"
                 android:layout_marginStart="30dp" />
 
-
+            <EditText
+                android:id="@+id/angular_value_id"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/angular_value"
+                android:inputType="textPersonName"
+                android:textColorHighlight="#8BC34A"
+                android:textColorLink="#8BC34A"
+                android:textSize="12sp"
+                android:autofillHints="" />
 
 
             <Switch
