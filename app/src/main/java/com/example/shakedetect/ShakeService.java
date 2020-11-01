@@ -1,5 +1,6 @@
 package com.example.shakedetect;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -48,7 +50,7 @@ public class ShakeService extends Service {
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta;
             if (mAccel > shakeSensitivity) {
-                Toast.makeText(getApplicationContext(), "SHAKED", Toast.LENGTH_SHORT).show();
+                turnOnScreen();
             }
 
         }
@@ -76,6 +78,17 @@ public class ShakeService extends Service {
     public void onDestroy() {
         mSensorManager.unregisterListener(sensorEventListener);
         super.onDestroy();
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+    @SuppressLint("InvalidWakeLockTag")
+    public void turnOnScreen() {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = pm.isInteractive();
+        if (!isScreenOn) {
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag");
+            wl.acquire();
+            wl.release();
+        }
     }
 
 }

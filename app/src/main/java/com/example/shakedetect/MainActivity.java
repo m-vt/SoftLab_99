@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
     static final String sensitivity = "sensitivity";
     TextView shakeText;
     EditText shakeSensitivityEditText ;
-//    SharedPreferences sharedPrefs;
 
 
     @Override
