@@ -12,13 +12,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    Switch shake_switch;
+    Switch shake_switch , sleep_mode_switch;
     String shakeSensitivityNum ;
     static final String sensitivity = "sensitivity";
-    TextView shakeText;
+    TextView shakeText, sleepText;
     EditText shakeSensitivityEditText ;
     SharedPreferences sharedPrefs;
-
+    String angular_value = "15";
+    EditText angular_value_editText;
+    static final String degree_id = "degree_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,22 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply();
             }
         });
+
+        sleep_mode_switch = findViewById(R.id.sleepmodeSwitch);
+        sleepText = findViewById(R.id.sleepMode_ID);
+
+        sleep_mode_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                angular_value = angular_value_editText.getText().toString();
+                if (isChecked) {
+                    Intent intent = new Intent(MainActivity.this, SleepModeService.class);
+                    startService(intent);
+                } else {
+                    stopService(new Intent(MainActivity.this, SleepModeService.class));
+                }
+            }
+        });
+
     }
 }
 
