@@ -1,6 +1,7 @@
 package com.example.shakedetect;
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -20,6 +21,7 @@ import androidx.annotation.RequiresApi;
 public class SleepModeService extends Service implements SensorEventListener {
 
     static int degree;
+    DevicePolicyManager deviceManger;
     SensorManager sensorManager;
     Sensor accelerometer;
 
@@ -32,6 +34,7 @@ public class SleepModeService extends Service implements SensorEventListener {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        deviceManger = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -55,13 +58,19 @@ public class SleepModeService extends Service implements SensorEventListener {
         g[2] = (float) (g[2] / norm_Of_g);
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         if (inclination < getDegree() || inclination > (180 - getDegree())) {
-            Toast.makeText(getApplicationContext(), "SLEEP", Toast.LENGTH_SHORT).show();
+            lockPhone();
+
         }
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    public void lockPhone() {
+        deviceManger.lockNow();
+    }
+
     public int getDegree() {
         return degree;
     }

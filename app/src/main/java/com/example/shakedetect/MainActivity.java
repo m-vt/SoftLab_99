@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    deviceManger.removeActiveAdmin(compName); // felan
+                    deviceManger.removeActiveAdmin(compName);
                     stopService(new Intent(MainActivity.this, SleepModeService.class));
                 }
             }
