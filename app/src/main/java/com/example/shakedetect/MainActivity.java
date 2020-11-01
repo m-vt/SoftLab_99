@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     static final String sensitivity = "sensitivity";
     TextView shakeText;
     EditText shakeSensitivityEditText ;
+    SharedPreferences sharedPrefs;
 
 
     @Override
@@ -25,14 +26,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPrefs = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
         shake_switch = findViewById(R.id.shakeSwitch);
         shakeText = findViewById(R.id.shake_ID);
         shakeSensitivityEditText = findViewById(R.id.shakeSensitivity);
+
+        if (sharedPrefs.getBoolean("SaveShakeSwitch", false)) {
+            shakeSensitivityEditText.setText(sharedPrefs.getString("lastshakeSensitivityNum", ""));
+        }
+        shake_switch.setChecked(sharedPrefs.getBoolean("SaveShakeSwitch", false));
         shake_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = getSharedPreferences("MySharedPref", MODE_PRIVATE).edit();
                 shakeSensitivityNum = shakeSensitivityEditText.getText().toString();
+
                 if (isChecked) {
 
                     if (!shakeSensitivityNum.isEmpty()) {
