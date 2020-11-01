@@ -76,45 +76,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        sleep_mode_switch = findViewById(R.id.sleepmodeSwitch);
-        sleepText = findViewById(R.id.sleepMode_ID);
-
-        sleep_mode_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                angular_value = angular_value_editText.getText().toString();
-                if (isChecked) {
-                    Intent intent = new Intent(MainActivity.this, SleepModeService.class);
-                    startService(intent);
-                } else {
-                    stopService(new Intent(MainActivity.this, SleepModeService.class));
-                }
-            }
-        });
-
+        angular_value_editText = findViewById(R.id.angular_value_id);
         sleep_mode_switch = findViewById(R.id.sleepmodeSwitch);
         sleepText = findViewById(R.id.sleepMode_ID);
 
         deviceManger = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         compName = new ComponentName(this, DeviceAdmin.class);
 
-        shake_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
+
+        if (sharedPrefs.getBoolean("SaveSleepModeSwitch", false))
+            angular_value_editText.setText(sharedPrefs.getString("lastDegree", ""));
+
+        sleep_mode_switch.setChecked(sharedPrefs.getBoolean("SaveSleepModeSwitch", false));
+
+        sleep_mode_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                shakeSensitivityNum = shakeSensitivityEditText.getText().toString();
+                SharedPreferences.Editor editor = getSharedPreferences("MySharedPref", MODE_PRIVATE).edit();
+                angular_value = angular_value_editText.getText().toString();
                 if (isChecked) {
-                    if (!shakeSensitivityNum.isEmpty()) {
-                        Intent intent_for_shake = new Intent(MainActivity.this, ShakeService.class);
-                        intent_for_shake.putExtra(sensitivity, shakeSensitivityNum);
-                        startService(intent_for_shake);
-                    } else {
-                        shake_switch.setChecked(false);
-                        Toast.makeText(getApplicationContext(), "Enter Shake Sensitivity", Toast.LENGTH_SHORT).show();
+                    if (!angular_value.isEmpty()) {
+                        boolean active = deviceManger.isAdminActive(compName);
+                        if (active) {
+                            Intent intent = new Intent(MainActivity.this, SleepModeService.class);
+                            intent.putExtra(degree_id, angular_value);
+                            startService(intent);
+                        } else {
+                            alertDialog();
+                        }
+                        editor.putBoolean("SaveSleepModeSwitch", true);
+                        editor.putString("lastDegree", angular_value);
+                    }else {
+                        sleep_mode_switch.setChecked(false);
+                        Toast.makeText(getApplicationContext() , "enter angular value" , Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    stopService(new Intent(MainActivity.this, ShakeService.class));
+                    deviceManger.removeActiveAdmin(compName); // felan
+                    stopService(new Intent(MainActivity.this, SleepModeService.class));
+                    editor.putBoolean("SaveSleepModeSwitch", false);
                 }
+                editor.apply();
             }
         });
+
 
     }
     public void enablePhone() {
