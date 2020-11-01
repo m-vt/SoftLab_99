@@ -19,6 +19,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:text="@string/perfeature"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/feature2"
@@ -40,6 +49,20 @@
                 android:text="@string/turn_on_screen_by_shaking"
                 android:textSize="18sp" />
 
+
+            <EditText
+                android:id="@+id/shakeSensitivity"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="sensitivity"
+                android:inputType="textPersonName"
+                android:textColorHighlight="#8BC34A"
+                android:textColorLink="#8BC34A"
+                android:textSize="12sp"
+                android:autofillHints=""
+                tools:ignore="InvalidId" />
 
             <Switch
                 android:id="@+id/shakeSwitch"

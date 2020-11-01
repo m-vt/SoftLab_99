@@ -3,6 +3,7 @@ package com.example.shakedetect;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,6 +14,8 @@ import android.os.IBinder;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
+import java.util.Objects;
 
 
 public class ShakeService extends Service {
@@ -54,9 +57,25 @@ public class ShakeService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getExtras() != null) {
+            shakeSensitivity = Integer.parseInt(Objects.requireNonNull(intent.getExtras().getString(MainActivity.sensitivity)));
+            SharedPreferences.Editor editor = getSharedPreferences("ShakePref", MODE_PRIVATE).edit();
+            editor.putInt("ShakeAmount", shakeSensitivity);
+            editor.apply();
+        } else {
+            SharedPreferences shake_pref = getSharedPreferences("ShakePref", MODE_PRIVATE);
+            shakeSensitivity = shake_pref.getInt("ShakeAmount", 10);
+        }
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(sensorEventListener, mAccelerometer, SensorManager.SENSOR_DELAY_UI, new Handler());
         return START_STICKY;
     }
+
+    @Override
+    public void onDestroy() {
+        mSensorManager.unregisterListener(sensorEventListener);
+        super.onDestroy();
+    }
+
 }
