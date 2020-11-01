@@ -4,7 +4,7 @@ import time
 from numpy import random as rn
 
 
-class PERSON_CONFLICT1:
+class PERSON_CONFLICT11111111:
     def __init__(self, has_corona, bored_time, arrival_time, service_time):
         self.has_corona = has_corona
         self.bored_time = bored_time
@@ -17,7 +17,7 @@ class PERSON_CONFLICT1:
         self.wait_in_reception_queue = None
         self.total_wait = None
 
-class DOCTOR_CONFLICT1:
+class DOCTOR_CONFLICT1111111:
     def __init__(self, mean_service_rate):
         self.check_up_mean_service_rate = mean_service_rate
         self.cur_pat_type_corona = None
